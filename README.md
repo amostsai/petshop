@@ -45,6 +45,11 @@
    ```bash
    docker compose down
    ```
+4. **若修改靜態檔案(html, css, js, jpg, png, gif等檔案)**
+   ```bash
+   docker compose down
+   docker compose up
+   ```
 
 ---
 
@@ -68,24 +73,14 @@ petshop/
 
 ---
 
-## 程式碼註解學習指引
-
-- **app/app.py**：每一段設定、註冊 blueprint 都有註解，說明其用途。
-- **app/blueprints/**：每個 routes.py 皆有註解，說明資料查詢、表單處理、資料庫寫入等流程。
-- **app/lib/db.py**：資料庫連線函式有詳細註解。
-- **app/templates/**：Jinja2 模板語法有註解，方便理解資料如何渲染到頁面。
-- **app/static/js/main.js**：表單驗證流程有註解。
-
----
-
 ## 學習重點
 
 - **Blueprint 分層**：如何將不同功能模組化，方便維護與擴充。
 - **資料庫連線**：如何用 Python 連接 MySQL，並安全寫入資料。
 - **表單處理**：前端驗證 + 後端驗證 + 資料寫入 DB。
 - **靜態檔案與模板**：Nginx 如何直接服務 /static，Flask 如何渲染 Jinja2 模板。
-- **Docker volume**：程式碼即時同步到 container，開發超方便。
-- **一鍵啟動**：用 docker compose up --build 即可啟動所有服務。
+- **Docker volume**：程式碼即時同步到 container，開發方便。
+- **一鍵啟動**：用 docker compose up 即可啟動所有服務。
 
 ---
 
@@ -93,8 +88,3 @@ petshop/
 
 - 嘗試新增一個「留言板」功能，練習 blueprint、資料庫設計、模板渲染。
 - 修改 Nginx 設定，體驗靜態檔案快取。
-- 練習將 SECRET_KEY、資料庫密碼等敏感資訊用 .env 管理。
-
----
-
-如有任何問題，歡迎討論與改進！

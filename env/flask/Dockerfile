@@ -10,6 +10,8 @@ RUN apt-get update && \
 COPY ./env/flask/requirements.txt /app/requirements.txt
 
 RUN pip install --upgrade pip
+
+# 安裝需要的python套件
 RUN pip install -r /app/requirements.txt
 
 CMD ["flask", "run", "--host=0.0.0.0", "--port=5000", "--reload"]
