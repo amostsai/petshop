@@ -1,0 +1,48 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: petshop-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: petshop
+      MYSQL_USER: petshop
+      MYSQL_PASSWORD: petshoppw
+      TZ: Asia/Taipei
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql:/var/lib/mysql
+      - ./env/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  flask:
+    build:
+      context: .
+      dockerfile: ./env/flask/Dockerfile
+    container_name: petshop-flask
+    environment:
+      FLASK_ENV: development
+      MYSQL_HOST: mysql
+      MYSQL_DATABASE: petshop
+      MYSQL_USER: petshop
+      MYSQL_PASSWORD: petshoppw
+      TZ: Asia/Taipei
+    volumes:
+      - ./app:/app
+    depends_on:
+      - mysql
+    ports:
+      - "5000:5000"
+
+  nginx:
+    image: nginx:alpine
+    container_name: petshop-nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./env/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./app/static:/static
+    depends_on:
+      - flask
+
+volumes:
+  mysql:

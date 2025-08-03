@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+<h1 class="text-3xl font-bold text-pink-700 mb-6 flex items-center"><i class="fa-solid fa-bullhorn mr-2"></i> 最新消息</h1>
+<div class="space-y-4">
+    {% for n in news %}
+    <div class="bg-yellow-50 border-l-4 border-pink-300 rounded-lg p-4 shadow flex flex-col md:flex-row md:items-center">
+        <div class="flex-1">
+            <div class="text-pink-800 font-semibold text-lg">{{ n[1] }}</div>
+            <div class="text-gray-600 text-sm mb-2">{{ n[2][:40] }}{% if n[2]|length > 40 %}...{% endif %}</div>
+            <a href="/news/{{ n[0] }}" class="text-pink-500 hover:underline font-bold text-sm">閱讀更多</a>
+        </div>
+        <div class="text-gray-400 text-xs md:ml-4 mt-2 md:mt-0">{{ n[3].strftime('%Y-%m-%d') }}</div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

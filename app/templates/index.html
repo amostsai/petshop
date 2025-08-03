@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block content %}
+<!-- 主視覺區塊 -->
+<div class="bg-gradient-to-r from-pink-100 to-yellow-100 rounded-2xl shadow-lg p-8 flex flex-col md:flex-row items-center mb-8">
+    <div class="flex-1 mb-4 md:mb-0">
+        <h1 class="text-4xl md:text-5xl font-extrabold text-pink-700 mb-2 flex items-center">
+            <i class="fa-solid fa-paw mr-2"></i> 歡迎來到毛孩樂園！
+        </h1>
+        <p class="text-lg text-pink-800 font-semibold mb-4">專業、用心、可愛的寵物照護夥伴</p>
+        <a href="/services" class="inline-block bg-pink-400 hover:bg-pink-500 text-white font-bold py-2 px-6 rounded-full shadow transition">了解我們的服務</a>
+    </div>
+    <div class="flex-1 flex justify-center">
+        <!-- 你可自行補圖 -->
+        <img src="/static/images/dog1.png" alt="可愛寵物插畫" class="w-56 h-56 object-contain rounded-full shadow-lg border-4 border-pink-200 bg-white">
+    </div>
+</div>
+
+<!-- 精選服務 -->
+<h2 class="text-2xl font-bold text-pink-700 mb-4 flex items-center"><i class="fa-solid fa-bone mr-2"></i> 精選服務</h2>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+    {% for s in services %}
+    <div class="bg-white rounded-xl shadow-md p-4 flex flex-col items-center hover:scale-105 transition">
+        <img src="{{ s[3] }}" alt="{{ s[1] }}" class="w-24 h-24 object-cover rounded-full border-2 border-pink-200 mb-2">
+        <div class="text-lg font-bold text-pink-800 mb-1">{{ s[1] }}</div>
+        <div class="text-sm text-gray-600 text-center">{{ s[2] }}</div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- 最新消息 -->
+<h2 class="text-2xl font-bold text-pink-700 mb-4 flex items-center"><i class="fa-solid fa-bullhorn mr-2"></i> 最新消息</h2>
+<div class="space-y-4">
+    {% for n in news %}
+    <div class="bg-yellow-50 border-l-4 border-pink-300 rounded-lg p-4 shadow flex flex-col md:flex-row md:items-center">
+        <div class="flex-1">
+            <div class="text-pink-800 font-semibold text-lg">{{ n[1] }}</div>
+            <div class="text-gray-600 text-sm mb-2">{{ n[2][:40] }}{% if n[2]|length > 40 %}...{% endif %}</div>
+            <a href="/news/{{ n[0] }}" class="text-pink-500 hover:underline font-bold text-sm">閱讀更多</a>
+        </div>
+        <div class="text-gray-400 text-xs md:ml-4 mt-2 md:mt-0">{{ n[3].strftime('%Y-%m-%d') }}</div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

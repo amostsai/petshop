@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>毛孩樂園寵物店</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" href="/static/img/favicon.ico">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css">
+</head>
+<body class="bg-pink-50 min-h-screen flex flex-col">
+    <!-- 導覽列 -->
+    <nav class="bg-pink-200 shadow-md">
+        <div class="container mx-auto flex items-center justify-between py-3 px-4">
+            <a href="/" class="flex items-center space-x-2 text-2xl font-bold text-pink-700">
+                <span><i class="fa-solid fa-paw"></i></span>
+                <span>毛孩樂園(教學使用)</span>
+            </a>
+            <ul class="flex space-x-6 text-lg font-semibold">
+                <li><a href="/" class="hover:text-pink-600">首頁</a></li>
+                <li><a href="/news" class="hover:text-pink-600">最新消息</a></li>
+                <li><a href="/services" class="hover:text-pink-600">服務介紹</a></li>
+                <li><a href="/about" class="hover:text-pink-600">關於我們</a></li>
+                <li><a href="/contact" class="hover:text-pink-600">聯絡我們</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- flash 訊息 -->
+    <div class="container mx-auto mt-4">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="mb-2 px-4 py-2 rounded bg-green-100 text-green-800 border border-green-300">
+                {{ message }}
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+    </div>
+
+    <!-- 主要內容 -->
+    <main class="flex-1 container mx-auto px-4 py-6">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- footer -->
+    <footer class="bg-pink-200 text-center py-4 mt-8">
+        <div class="flex justify-center space-x-4 mb-2">
+            <a href="https://www.facebook.com/" target="_blank" class="text-pink-700 hover:text-pink-900 text-2xl"><i class="fab fa-facebook"></i></a>
+            <a href="https://www.instagram.com/" target="_blank" class="text-pink-700 hover:text-pink-900 text-2xl"><i class="fab fa-instagram"></i></a>
+            <a href="https://line.me/" target="_blank" class="text-pink-700 hover:text-pink-900 text-2xl"><i class="fab fa-line"></i></a>
+        </div>
+        <div class="text-pink-700 text-sm">&copy; 2025 毛孩樂園寵物店 | 專業、用心、可愛的寵物照護夥伴</div>
+        <div class="text-pink-700 text-sm"><< 僅供教學使用，圖片無版權勿使用於正式網站 >></div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block content %}
+<h1 class="text-3xl font-bold text-pink-700 mb-6 flex items-center"><i class="fa-solid fa-cat mr-2"></i> 關於我們</h1>
+<div class="bg-white rounded-xl shadow-lg p-8 flex flex-col md:flex-row items-center mb-8">
+    <div class="flex-1 mb-4 md:mb-0">
+        <div class="text-lg text-gray-800 mb-4">{{ about_info[1] }}</div>
+        <div class="flex space-x-4 mt-2">
+            <a href="https://www.facebook.com/" target="_blank" class="text-pink-700 hover:text-pink-900 text-2xl"><i class="fab fa-facebook"></i></a>
+            <a href="https://www.instagram.com/" target="_blank" class="text-pink-700 hover:text-pink-900 text-2xl"><i class="fab fa-instagram"></i></a>
+            <a href="https://line.me/" target="_blank" class="text-pink-700 hover:text-pink-900 text-2xl"><i class="fab fa-line"></i></a>
+        </div>
+    </div>
+    <div class="flex-1 flex justify-center">
+        <img src="{{ about_info[2] }}" alt="團隊照片" class="w-56 h-56 object-cover rounded-full border-4 border-pink-200 bg-white shadow-lg">
+    </div>
+</div>
+<!-- Google Map -->
+<div class="bg-pink-100 rounded-xl shadow-md p-6 mb-4">
+    <h2 class="text-xl font-bold text-pink-700 mb-2"><i class="fa-solid fa-location-dot mr-1"></i> 店鋪位置</h2>
+    <div class="w-full h-[35rem]">
+        <iframe class="w-full h-full rounded-lg border-2 border-pink-200" src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d14458.761222012694!2d121.52636555360262!3d25.044581969525346!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1szh-TW!2stw!4v1754221012416!5m2!1szh-TW!2stw" style="border:0; height:100%;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+    </div>
+</div>
+{% endblock %}
