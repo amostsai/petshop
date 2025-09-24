@@ -3,16 +3,19 @@ services:
     image: mysql:8.0
     container_name: petshop-mysql
     environment:
-      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/mysql_root_password
       MYSQL_DATABASE: petshop
       MYSQL_USER: petshop
-      MYSQL_PASSWORD: petshoppw
+      MYSQL_PASSWORD_FILE: /run/secrets/mysql_user_password
       TZ: Asia/Taipei
     ports:
       - "3306:3306"
     volumes:
       - mysql:/var/lib/mysql
       - ./env/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
+    secrets:
+      - mysql_root_password
+      - mysql_user_password
 
   flask:
     build:
@@ -21,10 +24,13 @@ services:
     container_name: petshop-flask
     environment:
       FLASK_ENV: development
+      FLASK_APP: app:create_app
+      APP_ENV: development
       MYSQL_HOST: mysql
       MYSQL_DATABASE: petshop
       MYSQL_USER: petshop
-      MYSQL_PASSWORD: petshoppw
+      MYSQL_PASSWORD_FILE: /run/secrets/mysql_user_password
+      SECRET_KEY_FILE: /run/secrets/flask_secret_key
       TZ: Asia/Taipei
     volumes:
       - ./app:/app
@@ -32,6 +38,9 @@ services:
       - mysql
     ports:
       - "5000:5000"
+    secrets:
+      - mysql_user_password
+      - flask_secret_key
 
   nginx:
     image: nginx:alpine
@@ -46,3 +55,11 @@ services:
 
 volumes:
   mysql:
+
+secrets:
+  mysql_root_password:
+    file: ./secrets/mysql_root_password.txt
+  mysql_user_password:
+    file: ./secrets/mysql_user_password.txt
+  flask_secret_key:
+    file: ./secrets/flask_secret_key.txt

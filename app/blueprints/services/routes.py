@@ -1,13 +1,15 @@
-from flask import render_template
+from flask import abort, current_app, render_template
+
 from . import services_bp
-from lib.db import get_db_conn
+from app.lib.errors import DataAccessError
+from app.services import services_service
+
 
 @services_bp.route('/')
 def services_list():
-    conn = get_db_conn()
-    cur = conn.cursor()
-    cur.execute("SELECT id, name, description, image_url FROM services;")
-    services = cur.fetchall()
-    cur.close()
-    conn.close()
+    try:
+        services = services_service.get_services()
+    except DataAccessError:
+        current_app.logger.exception("Failed to load services list")
+        abort(500)
     return render_template('services.html', services=services)

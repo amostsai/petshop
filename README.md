@@ -41,18 +41,25 @@
    cd petshop
    ```
 
-2. **啟動服務**
+2. **準備 Docker Secrets**
+   - 編輯 `secrets/` 目錄內的三個檔案：
+     - `mysql_root_password.txt`
+     - `mysql_user_password.txt`
+     - `flask_secret_key.txt`
+   - 將內容改成自己的安全密碼／金鑰。範例值僅供教學使用。
+
+3. **啟動服務**
    ```bash
    docker compose up
    ```
    - 第一次啟動會自動建立資料庫與 seed 假資料。
    - 預設網站入口：http://localhost
 
-3. **關閉服務**
+4. **關閉服務**
    ```bash
    docker compose down
    ```
-4. **若修改靜態檔案(html, css, js, jpg, png, gif等檔案)**
+5. **若修改靜態檔案(html, css, js, jpg, png, gif等檔案)**
    ```bash
    docker compose down
    docker compose up
@@ -65,9 +72,13 @@
 ```
 petshop/
 ├── app/                  # Flask 主程式
-│   ├── app.py            # Flask 應用主入口（註冊 blueprint、設定）
+│   ├── __init__.py       # 匯出 create_app 供 flask run 使用
+│   ├── app.py            # Flask application factory + blueprint 註冊
+│   ├── config.py         # 分環境設定與秘密讀取邏輯
 │   ├── blueprints/       # 各功能 blueprint（main, news, services, about）
-│   ├── lib/              # 共用程式（如資料庫連線）
+│   ├── lib/              # 共用工具（資料庫、快取、錯誤類別）
+│   ├── repositories/     # SQL 存取層，封裝資料庫操作
+│   ├── services/         # 業務邏輯層，提供快取與錯誤處理
 │   ├── static/           # 靜態檔案（CSS, JS, 圖片）
 │   └── templates/        # Jinja2 HTML 模板
 ├── env/

@@ -1,25 +1,27 @@
-from flask import render_template, abort
+from flask import abort, current_app, render_template
+
 from . import news_bp
-from lib.db import get_db_conn
+from app.lib.errors import DataAccessError
+from app.services import news_service
+
 
 @news_bp.route('/')
 def news_list():
-    conn = get_db_conn()
-    cur = conn.cursor()
-    cur.execute("SELECT id, title, content, created_at FROM news ORDER BY created_at DESC;")
-    news = cur.fetchall()
-    cur.close()
-    conn.close()
+    try:
+        news = news_service.get_news_list()
+    except DataAccessError:
+        current_app.logger.exception("Failed to load news list")
+        abort(500)
     return render_template('news.html', news=news)
+
 
 @news_bp.route('/<int:news_id>')
 def news_detail(news_id):
-    conn = get_db_conn()
-    cur = conn.cursor()
-    cur.execute("SELECT id, title, content, created_at FROM news WHERE id=%s;", (news_id,))
-    news = cur.fetchone()
-    cur.close()
-    conn.close()
+    try:
+        news = news_service.get_news_detail(news_id)
+    except DataAccessError:
+        current_app.logger.exception("Failed to load news detail")
+        abort(500)
     if not news:
         abort(404)
     return render_template('news_detail.html', news=news)
