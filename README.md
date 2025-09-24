@@ -73,14 +73,17 @@
 petshop/
 ├── app/                  # Flask 主程式
 │   ├── __init__.py       # 匯出 create_app 供 flask run 使用
-│   ├── app.py            # Flask application factory + blueprint 註冊
+│   ├── app.py            # Flask application factory + feature 註冊
 │   ├── config.py         # 分環境設定與秘密讀取邏輯
-│   ├── blueprints/       # 各功能 blueprint（main, news, services, about）
-│   ├── lib/              # 共用工具（資料庫、快取、錯誤類別）
-│   ├── repositories/     # SQL 存取層，封裝資料庫操作
-│   ├── services/         # 業務邏輯層，提供快取與錯誤處理
+│   ├── features/         # 依網站功能分組的模組
+│   │   ├── main/         # 首頁
+│   │   ├── news/         # 最新消息
+│   │   ├── contact/      # 聯絡我們
+│   │   ├── services/     # 服務介紹
+│   │   └── about/        # 關於我們
+│   ├── lib/              # 共用工具（資料庫、快取、錯誤類別等）
 │   ├── static/           # 靜態檔案（CSS, JS, 圖片）
-│   └── templates/        # Jinja2 HTML 模板
+│   └── templates/        # 共用模板（如 base.html）
 ├── env/
 │   ├── flask/            # Dockerfile
 │   ├── mysql/            # 資料庫初始化 SQL
@@ -88,6 +91,8 @@ petshop/
 ├── docker-compose.yml    # 一鍵啟動所有服務
 └── README.md             # 專案說明
 ```
+
+- 每個 feature 資料夾集中該功能所需的 Blueprint (`__init__.py`)、路由 (`routes.py`)、服務與資料存取層（視需求提供 `service.py`、`repository.py`）、以及對應模板 (`templates/`)。
 
 ---
 

@@ -1,4 +1,4 @@
-from app.repositories._utils import execute
+from app.lib.repository_utils import execute
 
 
 def create_contact(name: str, email: str, message: str) -> None:

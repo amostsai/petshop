@@ -1,4 +1,4 @@
-from app.repositories._utils import fetch_all, fetch_one
+from app.lib.repository_utils import fetch_all, fetch_one
 
 
 def fetch_latest(limit: int):

@@ -1,24 +1,25 @@
 from flask import abort, current_app, render_template
 
-from . import news_bp
 from app.lib.errors import DataAccessError
-from app.services import news_service
+
+from . import bp
+from .service import get_news_detail, get_news_list
 
 
-@news_bp.route('/')
+@bp.route('/')
 def news_list():
     try:
-        news = news_service.get_news_list()
+        news = get_news_list()
     except DataAccessError:
         current_app.logger.exception("Failed to load news list")
         abort(500)
     return render_template('news.html', news=news)
 
 
-@news_bp.route('/<int:news_id>')
+@bp.route('/<int:news_id>')
 def news_detail(news_id):
     try:
-        news = news_service.get_news_detail(news_id)
+        news = get_news_detail(news_id)
     except DataAccessError:
         current_app.logger.exception("Failed to load news detail")
         abort(500)

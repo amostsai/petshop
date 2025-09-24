@@ -1,7 +1,8 @@
 from flask import current_app
 
 from app.lib.cache import cache
-from app.repositories import services_repository
+
+from . import repository
 
 
 def _ttl() -> int:
@@ -14,7 +15,7 @@ def get_services(limit: int | None = None, *, use_cache: bool = True):
         cached = cache.get(cache_key)
         if cached is not None:
             return cached
-    services = services_repository.fetch_services(limit)
+    services = repository.fetch_services(limit)
     cache.set(cache_key, services, ttl=_ttl())
     return services
 

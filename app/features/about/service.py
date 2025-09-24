@@ -1,7 +1,8 @@
 from flask import current_app
 
 from app.lib.cache import cache
-from app.repositories import about_repository
+
+from . import repository
 
 
 def _ttl() -> int:
@@ -14,7 +15,7 @@ def get_about_info(*, use_cache: bool = True):
         cached = cache.get(cache_key)
         if cached is not None:
             return cached
-    about_info = about_repository.fetch_about_info()
+    about_info = repository.fetch_about_info()
     if about_info:
         cache.set(cache_key, about_info, ttl=_ttl())
     return about_info

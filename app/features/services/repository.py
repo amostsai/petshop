@@ -1,4 +1,4 @@
-from app.repositories._utils import fetch_all
+from app.lib.repository_utils import fetch_all
 
 
 def fetch_services(limit: int | None = None):

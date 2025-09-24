@@ -1,14 +1,15 @@
 from flask import abort, current_app, render_template
 
-from . import about_bp
 from app.lib.errors import DataAccessError
-from app.services import about_service
+
+from . import bp
+from .service import get_about_info
 
 
-@about_bp.route('/')
+@bp.route('/')
 def about():
     try:
-        about_info = about_service.get_about_info()
+        about_info = get_about_info()
     except DataAccessError:
         current_app.logger.exception("Failed to load about page")
         abort(500)
