@@ -10,13 +10,13 @@
 ## Build, Test, and Development Commands
 - `docker compose up` — build and start Nginx, Flask, and MySQL with local code mounted. Use `-d` for detached mode during longer sessions.
 - `docker compose logs -f flask` — tail application logs; helpful while iterating on routes or templates.
-- `docker compose exec flask flask --app app.app routes` — verify registered endpoints after adding or moving blueprints.
+- `docker compose exec flask flask --app app routes` — verify registered endpoints after adding or moving blueprints.
 - `docker compose down` — stop services and clean up containers; rerun after static asset changes to refresh Nginx cache.
 
 ## Coding Style & Naming Conventions
 - Follow PEP 8 with 4-space indentation and snake_case for functions, variables, and module names. Keep blueprint instances named `bp` for consistency with existing modules.
 - Use type hints as in `create_app` when adding new services or helpers.
-- Name templates after their feature (e.g., `app/features/news/templates/news/list.html`) to avoid collisions under `templates/`.
+- Name templates after their feature (e.g., `app/features/news/templates/news_detail.html`) to avoid collisions under `templates/`.
 - Store secrets and configuration through the `_read_secret` helper; do not hardcode sensitive values in code or templates.
 
 ## Testing Guidelines
