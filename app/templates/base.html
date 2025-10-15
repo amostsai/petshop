@@ -20,8 +20,19 @@
                 <li><a href="/" class="hover:text-pink-600">首頁</a></li>
                 <li><a href="/news" class="hover:text-pink-600">最新消息</a></li>
                 <li><a href="/services" class="hover:text-pink-600">服務介紹</a></li>
+                <li><a href="/products" class="hover:text-pink-600">商品專區</a></li>
                 <li><a href="/about" class="hover:text-pink-600">關於我們</a></li>
                 <li><a href="/contact" class="hover:text-pink-600">聯絡我們</a></li>
+                <li>
+                    <a href="/cart" class="hover:text-pink-600 flex items-center">
+                        <span class="mr-1">購物車</span>
+                        {% if cart_item_count %}
+                        <span class="inline-flex items-center justify-center text-xs font-semibold text-white bg-pink-500 rounded-full h-5 w-5">
+                            {{ cart_item_count }}
+                        </span>
+                        {% endif %}
+                    </a>
+                </li>
             </ul>
         </div>
     </nav>

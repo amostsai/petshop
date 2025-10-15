@@ -13,6 +13,18 @@ def create_app(config_name: str | None = None) -> Flask:
     register_features(app)
     init_db(app)
 
+    @app.context_processor
+    def inject_cart_badge():
+        try:
+            from app.lib import cart as cart_utils
+
+            summary = cart_utils.summarize()
+            return {
+                'cart_item_count': summary['total_quantity'],
+            }
+        except Exception:
+            return {'cart_item_count': 0}
+
     return app
 
 

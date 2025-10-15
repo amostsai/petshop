@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="bg-white rounded-2xl shadow-lg p-10 text-center space-y-4">
+    <div class="text-pink-500 text-5xl">
+        <i class="fa-solid fa-paw"></i>
+    </div>
+    <h1 class="text-3xl font-bold text-pink-700">感謝您的訂購！</h1>
+    <p class="text-gray-600">我們已收到您的訂單，服務人員將於 1 個工作日內與您聯繫確認細節。</p>
+    <div class="bg-pink-50 border border-pink-100 rounded-xl px-6 py-4 inline-block">
+        <p class="text-sm text-gray-500 mb-1">訂單編號</p>
+        <p class="text-xl font-semibold text-pink-700 tracking-wide">{{ order_number }}</p>
+    </div>
+    <div class="pt-4 space-x-3">
+        <a href="{{ url_for('products.catalog') }}"
+           class="inline-flex items-center px-4 py-2 bg-pink-500 hover:bg-pink-600 text-white font-semibold rounded-lg transition">
+            繼續逛逛
+        </a>
+        <a href="{{ url_for('main.index') }}"
+           class="inline-flex items-center px-4 py-2 bg-white border border-pink-200 text-pink-600 hover:bg-pink-50 font-semibold rounded-lg transition">
+            返回首頁
+        </a>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block content %}
+<h1 class="text-3xl font-bold text-pink-700 mb-6 flex items-center">
+    <i class="fa-solid fa-cart-shopping mr-3"></i> 我的購物車
+</h1>
+
+{% set cart_items = summary['items'] %}
+{% if cart_items %}
+<div class="grid lg:grid-cols-3 gap-6">
+    <div class="lg:col-span-2 space-y-4">
+        {% for item in cart_items %}
+        <div class="bg-white rounded-xl shadow p-4 flex flex-col md:flex-row md:items-center gap-4">
+            <div class="w-full md:w-32">
+                <img src="{{ item.image_url }}" alt="{{ item.name }}" class="w-full h-32 object-cover rounded-lg border border-pink-100">
+            </div>
+            <div class="flex-1 space-y-2">
+                <div class="flex items-center justify-between">
+                    <h2 class="text-xl font-semibold text-pink-700">{{ item.name }}</h2>
+                    <form method="post" action="{{ url_for('cart.remove_item') }}">
+                        <input type="hidden" name="product_slug" value="{{ item.product_slug }}">
+                        <button type="submit" class="text-sm text-gray-400 hover:text-red-500">移除</button>
+                    </form>
+                </div>
+                <div class="text-gray-500 text-sm">單價：{{ ('NT$ {:,.0f}').format(item.unit_price_amount) }}</div>
+                <div class="flex items-center gap-3">
+                    <form method="post" action="{{ url_for('cart.update_item') }}" class="flex items-center gap-2">
+                        <input type="hidden" name="product_slug" value="{{ item.product_slug }}">
+                        <input type="number" name="quantity" min="1" value="{{ item.quantity }}"
+                               class="w-20 px-3 py-2 border border-pink-200 rounded focus:outline-none focus:ring-2 focus:ring-pink-400">
+                        <button type="submit" class="px-3 py-2 text-sm font-semibold text-white bg-pink-500 hover:bg-pink-600 rounded-lg transition">
+                            更新
+                        </button>
+                    </form>
+                    <span class="text-xs text-gray-400">庫存 {{ item.stock }} 件</span>
+                </div>
+            </div>
+            <div class="text-right md:w-36">
+                <div class="text-sm text-gray-400">小計</div>
+                <div class="text-xl font-bold text-pink-700">{{ ('NT$ {:,.0f}').format(item.line_total) }}</div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <aside class="bg-white rounded-xl shadow p-5 space-y-4 h-max">
+        <h2 class="text-xl font-semibold text-pink-700">訂單摘要</h2>
+        <div class="flex justify-between text-gray-600">
+            <span>商品件數</span>
+            <span>{{ summary['total_quantity'] }}</span>
+        </div>
+        <div class="flex justify-between text-lg font-bold text-pink-700 border-t border-pink-100 pt-3">
+            <span>總金額</span>
+            <span>{{ ('NT$ {:,.0f}').format(summary['total_amount']) }}</span>
+        </div>
+        <a href="{{ url_for('cart.checkout') }}"
+           class="block text-center px-4 py-3 bg-pink-500 hover:bg-pink-600 text-white font-semibold rounded-lg transition">
+            前往結帳
+        </a>
+        <a href="{{ url_for('products.catalog') }}" class="block text-center text-sm text-pink-500 hover:text-pink-600">
+            繼續購物
+        </a>
+    </aside>
+</div>
+{% else %}
+<div class="bg-white rounded-xl shadow p-8 text-center text-gray-600">
+    <p class="mb-4">購物車目前是空的，快去逛逛為毛孩挑好物！</p>
+    <a href="{{ url_for('products.catalog') }}"
+       class="inline-flex items-center px-5 py-3 bg-pink-500 hover:bg-pink-600 text-white font-semibold rounded-lg transition">
+        前往商品專區
+    </a>
+</div>
+{% endif %}
+{% endblock %}
