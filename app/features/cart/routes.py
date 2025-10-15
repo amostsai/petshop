@@ -18,7 +18,7 @@ from .service import CartError
 @bp.route('/')
 def view_cart():
     summary = service.get_summary()
-    return render_template('cart/cart.html', summary=summary)
+    return render_template('cart.html', summary=summary)
 
 
 @bp.route('/add', methods=['POST'])
@@ -97,11 +97,11 @@ def checkout():
             flash("結帳時發生錯誤，請稍後再試", 'error')
         return redirect(url_for('cart.checkout'))
 
-    return render_template('cart/checkout.html', summary=summary)
+    return render_template('checkout.html', summary=summary)
 
 
 @bp.route('/thank-you/<order_number>')
 def thank_you(order_number: str):
     if not order_number:
         abort(404)
-    return render_template('cart/thank_you.html', order_number=order_number)
+    return render_template('thank_you.html', order_number=order_number)
