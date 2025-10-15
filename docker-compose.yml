@@ -53,6 +53,33 @@ services:
     depends_on:
       - flask
 
+  pytest:
+    build:
+      context: .
+      dockerfile: ./env/flask/Dockerfile
+    container_name: petshop-pytest
+    environment:
+      APP_ENV: testing
+      FLASK_ENV: testing
+      MYSQL_HOST: mysql
+      MYSQL_DATABASE: petshop
+      MYSQL_USER: petshop
+      MYSQL_PASSWORD_FILE: /run/secrets/mysql_user_password
+      SECRET_KEY_FILE: /run/secrets/flask_secret_key
+      TZ: Asia/Taipei
+      PYTHONPATH: /workspace
+    volumes:
+      - .:/workspace
+    working_dir: /workspace
+    entrypoint: ["pytest"]
+    depends_on:
+      - mysql
+    secrets:
+      - mysql_user_password
+      - flask_secret_key
+    profiles:
+      - test
+
 volumes:
   mysql:
 

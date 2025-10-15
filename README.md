@@ -115,6 +115,15 @@ petshop/
 
 ---
 
+## 測試指南
+
+- 安裝相依套件後可在專案根目錄執行 `pytest`，預設會載入 `APP_ENV=testing` 的 Flask 設定。
+- 測試使用 fixtures 模擬資料庫回傳值與購物車狀態，不需要啟動 MySQL 或額外 seeding。
+- 若要觀察重新導向流程，可加上 `-s` 或 `--maxfail=1` 輕鬆除錯。
+- 亦可透過 Docker 執行：`docker compose --profile test run --rm pytest`（或 `COMPOSE_PROFILES=test docker compose run --rm pytest`），會使用 testing 組態並在容器內跑完整測試。
+
+---
+
 ## 進階練習建議
 
 - 嘗試新增一個「留言板」功能，練習 blueprint、資料庫設計、模板渲染。
