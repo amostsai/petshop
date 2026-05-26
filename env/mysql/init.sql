@@ -83,7 +83,7 @@ CREATE TABLE orders (
   fulfillment_method ENUM('pickup','delivery') NOT NULL,
   notes TEXT,
   total_amount DECIMAL(10,2) NOT NULL,
-  payment_status ENUM('pending','paid','failed') NOT NULL DEFAULT 'pending',
+  payment_status ENUM('pending','paid','failed','cancelled') NOT NULL DEFAULT 'pending',
   ecpay_trade_no VARCHAR(20),
   ecpay_payment_type VARCHAR(20),
   ecpay_payment_date DATETIME,

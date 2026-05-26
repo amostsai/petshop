@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between mb-6">
+    <h1 class="text-3xl font-bold text-pink-700 flex items-center">
+        <i class="fa-solid fa-receipt mr-3"></i> 訂單後台
+    </h1>
+    <form method="post" action="{{ url_for('admin.logout') }}">
+        <button type="submit" class="px-4 py-2 border border-pink-200 text-pink-600 hover:bg-pink-50 rounded-lg font-semibold">
+            登出
+        </button>
+    </form>
+</div>
+
+<div class="bg-white rounded-xl shadow p-4 mb-6">
+    <div class="flex flex-wrap gap-2">
+        <a href="{{ url_for('admin.orders') }}"
+           class="px-3 py-2 rounded-lg text-sm font-semibold {% if not selected_status %}bg-pink-500 text-white{% else %}bg-pink-50 text-pink-700 hover:bg-pink-100{% endif %}">
+            全部
+        </a>
+        {% for value, label in status_labels.items() %}
+        <a href="{{ url_for('admin.orders', status=value) }}"
+           class="px-3 py-2 rounded-lg text-sm font-semibold {% if selected_status == value %}bg-pink-500 text-white{% else %}bg-pink-50 text-pink-700 hover:bg-pink-100{% endif %}">
+            {{ label }}
+        </a>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="bg-white rounded-xl shadow overflow-hidden">
+    <table class="min-w-full divide-y divide-pink-100">
+        <thead class="bg-pink-50">
+            <tr>
+                <th class="px-4 py-3 text-left text-sm font-semibold text-gray-600">訂單編號</th>
+                <th class="px-4 py-3 text-left text-sm font-semibold text-gray-600">顧客</th>
+                <th class="px-4 py-3 text-right text-sm font-semibold text-gray-600">金額</th>
+                <th class="px-4 py-3 text-left text-sm font-semibold text-gray-600">付款狀態</th>
+                <th class="px-4 py-3 text-left text-sm font-semibold text-gray-600">建立時間</th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-pink-50">
+            {% for order in orders %}
+            <tr class="hover:bg-pink-50">
+                <td class="px-4 py-3">
+                    <a href="{{ url_for('admin.order_detail', order_number=order.order_number) }}"
+                       class="font-semibold text-pink-600 hover:text-pink-700">
+                        {{ order.order_number }}
+                    </a>
+                </td>
+                <td class="px-4 py-3 text-gray-700">
+                    <div class="font-semibold">{{ order.customer_name }}</div>
+                    <div class="text-xs text-gray-500">{{ order.customer_email }}</div>
+                </td>
+                <td class="px-4 py-3 text-right font-semibold text-gray-700">{{ ('NT$ {:,.0f}').format(order.total_amount) }}</td>
+                <td class="px-4 py-3">
+                    <span class="inline-flex px-2 py-1 rounded text-xs font-semibold
+                                 {% if order.payment_status == 'paid' %}bg-green-100 text-green-700
+                                 {% elif order.payment_status == 'failed' %}bg-red-100 text-red-700
+                                 {% elif order.payment_status == 'cancelled' %}bg-gray-100 text-gray-700
+                                 {% else %}bg-amber-100 text-amber-700{% endif %}">
+                        {{ status_labels.get(order.payment_status, order.payment_status) }}
+                    </span>
+                </td>
+                <td class="px-4 py-3 text-sm text-gray-600">{{ order.created_at }}</td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="5" class="px-4 py-10 text-center text-gray-500">目前沒有符合條件的訂單</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -168,3 +168,31 @@ def test_ecpay_return_rejects_invalid_check_mac_value(client, monkeypatch):
     assert response.status_code == 400
     assert response.get_data(as_text=True) == "0|CheckMacValue Error"
     assert calls["recorded"] is False
+
+
+def test_record_ecpay_result_preserves_cancelled_order(monkeypatch):
+    calls = {"updated": False}
+
+    monkeypatch.setattr(
+        "app.features.cart.service.repository.fetch_order_payment_status",
+        lambda order_number: {"order_number": order_number, "payment_status": "cancelled"},
+    )
+
+    def fake_update_payment_result(order_number, payment_values):
+        calls["updated"] = True
+        return True
+
+    monkeypatch.setattr("app.features.cart.service.repository.update_payment_result", fake_update_payment_result)
+
+    from app.features.cart.service import record_ecpay_result
+
+    updated = record_ecpay_result(
+        {
+            "MerchantTradeNo": "PS250101000000",
+            "RtnCode": "1",
+            "TradeNo": "2501011234567890",
+        }
+    )
+
+    assert updated is True
+    assert calls["updated"] is False

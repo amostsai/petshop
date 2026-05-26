@@ -138,6 +138,36 @@ ECPAY_CLIENT_BACK_URL=https://你的公開網址/cart/thank-you/訂單編號
 ECPAY_RETURN_URL=https://example.ngrok-free.app/cart/ecpay/return docker compose up
 ```
 
+若服務已經在執行，設定公開 callback 後需要重建 Flask container 讓環境變數進入容器：
+
+```bash
+ECPAY_RETURN_URL=https://example.ngrok-free.app/cart/ecpay/return docker compose up -d --force-recreate flask
+docker compose exec flask env | grep ECPAY_RETURN_URL
+```
+
+付款後若平台仍顯示待付款，先確認 Flask log 是否有收到綠界 callback：
+
+```bash
+docker compose logs --tail=200 flask | grep /cart/ecpay/return
+```
+
+如果沒有任何 `/cart/ecpay/return` 紀錄，代表綠界沒有成功打到平台，通常是 `ECPAY_RETURN_URL` 沒有設定成公開網址、沒有傳進 container，或 ngrok/防火牆沒有轉到本機服務。
+
+完成公開 callback smoke test 後，再封存 OpenSpec 任務：
+
+1. 用 ngrok 或公開測試網址設定 `ECPAY_RETURN_URL=https://.../cart/ecpay/return`。
+2. 完成一次綠界測試付款。
+3. 確認該訂單的 `payment_status` 變成 `paid`。
+4. 勾選 `openspec/changes/add-ecpay-test-payment/tasks.md` 的 `2.3 Smoke test checkout in Docker with an externally reachable callback URL`。
+5. 執行封存並驗證：
+
+   ```bash
+   openspec archive add-ecpay-test-payment --yes
+   openspec validate --strict
+   ```
+
+目前此 OpenSpec change 先保留在 active changes，避免在公開 callback 驗證完成前封存。
+
 若你是在既有 MySQL volume 上加入此功能，`env/mysql/init.sql` 不會自動重新套用。可選擇重建資料庫：
 
 ```bash
@@ -165,6 +195,36 @@ ALTER TABLE orders
 - 測試使用 fixtures 模擬資料庫回傳值與購物車狀態，不需要啟動 MySQL 或額外 seeding。
 - 若要觀察重新導向流程，可加上 `-s` 或 `--maxfail=1` 輕鬆除錯。
 - 亦可透過 Docker 執行：`docker compose --profile test run --rm pytest`（或 `COMPOSE_PROFILES=test docker compose run --rm pytest`），會使用 testing 組態並在容器內跑完整測試。
+
+---
+
+## 後台訂單管理
+
+後台入口：`/admin/orders`
+
+預設開發帳密：
+
+```bash
+ADMIN_USERNAME=admin
+ADMIN_PASSWORD=admin
+```
+
+可透過環境變數或 Docker secret 覆寫。正式環境請務必更換預設密碼。
+
+後台目前提供：
+
+- 訂單列表與付款狀態篩選：`pending`、`paid`、`failed`、`cancelled`
+- 訂單詳情：顧客資訊、取貨方式、備註、商品明細、總金額、綠界交易資訊
+- 本地取消：可將 `pending` 或 `failed` 訂單標記為 `cancelled`
+
+注意：目前取消只是站內狀態，不會呼叫綠界退款或取消 API。若訂單已標記為 `cancelled`，後續晚到的綠界 callback 不會自動把狀態改成 `paid`。
+
+若你是在既有 MySQL volume 上加入後台取消狀態，需讓 `orders.payment_status` 支援 `cancelled`：
+
+```sql
+ALTER TABLE orders
+  MODIFY COLUMN payment_status ENUM('pending','paid','failed','cancelled') NOT NULL DEFAULT 'pending';
+```
 
 ---
 

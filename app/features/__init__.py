@@ -1,4 +1,4 @@
-from . import about, cart, contact, main, news, products, services
+from . import about, admin, cart, contact, main, news, products, services
 
 
 def register_features(app):
@@ -9,3 +9,4 @@ def register_features(app):
     app.register_blueprint(contact.bp, url_prefix='/contact')
     app.register_blueprint(products.bp, url_prefix='/products')
     app.register_blueprint(cart.bp, url_prefix='/cart')
+    app.register_blueprint(admin.bp, url_prefix='/admin')

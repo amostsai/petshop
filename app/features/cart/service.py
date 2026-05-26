@@ -170,6 +170,12 @@ def record_ecpay_result(form_data: Dict[str, Any]) -> bool:
     if not order_number:
         raise CartError("缺少訂單編號")
 
+    current_order = repository.fetch_order_payment_status(order_number)
+    if not current_order:
+        return False
+    if current_order.get('payment_status') == 'cancelled':
+        return True
+
     return_code = str(form_data.get('RtnCode') or '')
     payment_status = 'paid' if return_code == '1' else 'failed'
 

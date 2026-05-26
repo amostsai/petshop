@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between mb-6">
+    <div>
+        <a href="{{ url_for('admin.orders') }}" class="text-sm text-pink-600 hover:text-pink-700">返回訂單列表</a>
+        <h1 class="text-3xl font-bold text-pink-700 mt-2">訂單 {{ order.order_number }}</h1>
+    </div>
+    <span class="inline-flex px-3 py-2 rounded-lg text-sm font-semibold w-max
+                 {% if order.payment_status == 'paid' %}bg-green-100 text-green-700
+                 {% elif order.payment_status == 'failed' %}bg-red-100 text-red-700
+                 {% elif order.payment_status == 'cancelled' %}bg-gray-100 text-gray-700
+                 {% else %}bg-amber-100 text-amber-700{% endif %}">
+        {{ status_labels.get(order.payment_status, order.payment_status) }}
+    </span>
+</div>
+
+<div class="grid lg:grid-cols-3 gap-6">
+    <section class="bg-white rounded-xl shadow p-6 lg:col-span-2">
+        <h2 class="text-xl font-semibold text-pink-700 mb-4">商品明細</h2>
+        <table class="min-w-full divide-y divide-pink-100">
+            <thead class="bg-pink-50">
+                <tr>
+                    <th class="px-3 py-2 text-left text-sm font-semibold text-gray-600">商品</th>
+                    <th class="px-3 py-2 text-right text-sm font-semibold text-gray-600">單價</th>
+                    <th class="px-3 py-2 text-right text-sm font-semibold text-gray-600">數量</th>
+                    <th class="px-3 py-2 text-right text-sm font-semibold text-gray-600">小計</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-pink-50">
+                {% for item in order['items'] %}
+                <tr>
+                    <td class="px-3 py-3 text-gray-700">{{ item.product_name }}</td>
+                    <td class="px-3 py-3 text-right text-gray-600">{{ ('NT$ {:,.0f}').format(item.unit_price) }}</td>
+                    <td class="px-3 py-3 text-right text-gray-600">{{ item.quantity }}</td>
+                    <td class="px-3 py-3 text-right font-semibold text-gray-700">{{ ('NT$ {:,.0f}').format(item.line_total) }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div class="text-right text-xl font-bold text-pink-700 border-t border-pink-100 mt-4 pt-4">
+            總金額 {{ ('NT$ {:,.0f}').format(order.total_amount) }}
+        </div>
+    </section>
+
+    <aside class="space-y-6">
+        <section class="bg-white rounded-xl shadow p-6">
+            <h2 class="text-xl font-semibold text-pink-700 mb-4">顧客資訊</h2>
+            <dl class="space-y-3 text-sm">
+                <div><dt class="text-gray-500">姓名</dt><dd class="font-semibold text-gray-700">{{ order.customer_name }}</dd></div>
+                <div><dt class="text-gray-500">Email</dt><dd class="font-semibold text-gray-700">{{ order.customer_email }}</dd></div>
+                <div><dt class="text-gray-500">電話</dt><dd class="font-semibold text-gray-700">{{ order.customer_phone }}</dd></div>
+                <div><dt class="text-gray-500">取貨方式</dt><dd class="font-semibold text-gray-700">{{ '到店自取' if order.fulfillment_method == 'pickup' else '宅配到府' }}</dd></div>
+                <div><dt class="text-gray-500">備註</dt><dd class="font-semibold text-gray-700">{{ order.notes or '無' }}</dd></div>
+            </dl>
+        </section>
+
+        <section class="bg-white rounded-xl shadow p-6">
+            <h2 class="text-xl font-semibold text-pink-700 mb-4">付款資訊</h2>
+            <dl class="space-y-3 text-sm">
+                <div><dt class="text-gray-500">綠界交易編號</dt><dd class="font-semibold text-gray-700">{{ order.ecpay_trade_no or '尚無' }}</dd></div>
+                <div><dt class="text-gray-500">付款方式</dt><dd class="font-semibold text-gray-700">{{ order.ecpay_payment_type or '尚無' }}</dd></div>
+                <div><dt class="text-gray-500">付款時間</dt><dd class="font-semibold text-gray-700">{{ order.ecpay_payment_date or '尚無' }}</dd></div>
+                <div><dt class="text-gray-500">回傳訊息</dt><dd class="font-semibold text-gray-700">{{ order.ecpay_return_message or '尚無' }}</dd></div>
+            </dl>
+            {% if order.payment_status in ['pending', 'failed'] %}
+            <form method="post" action="{{ url_for('admin.cancel_order', order_number=order.order_number) }}" class="mt-5">
+                <button type="submit" class="w-full px-4 py-2 bg-gray-700 hover:bg-gray-800 text-white font-semibold rounded-lg">
+                    標記為取消
+                </button>
+            </form>
+            {% endif %}
+        </section>
+    </aside>
+</div>
+{% endblock %}

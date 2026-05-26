@@ -39,6 +39,8 @@ class BaseConfig:
     ECPAY_HASH_IV = _read_secret('ECPAY_HASH_IV', 'EkRm7iFT261dpevs')
     ECPAY_RETURN_URL = os.environ.get('ECPAY_RETURN_URL')
     ECPAY_CLIENT_BACK_URL = os.environ.get('ECPAY_CLIENT_BACK_URL')
+    ADMIN_USERNAME = os.environ.get('ADMIN_USERNAME', 'admin')
+    ADMIN_PASSWORD = _read_secret('ADMIN_PASSWORD', 'admin')
 
 
 class DevelopmentConfig(BaseConfig):
