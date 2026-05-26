@@ -30,6 +30,15 @@ class BaseConfig:
     CACHE_NEWS_TTL = int(os.environ.get('CACHE_NEWS_TTL', 120))
     CACHE_SERVICES_TTL = int(os.environ.get('CACHE_SERVICES_TTL', 300))
     CACHE_ABOUT_TTL = int(os.environ.get('CACHE_ABOUT_TTL', 600))
+    ECPAY_CHECKOUT_URL = os.environ.get(
+        'ECPAY_CHECKOUT_URL',
+        'https://payment-stage.ecpay.com.tw/Cashier/AioCheckOut/V5',
+    )
+    ECPAY_MERCHANT_ID = os.environ.get('ECPAY_MERCHANT_ID', '3002607')
+    ECPAY_HASH_KEY = _read_secret('ECPAY_HASH_KEY', 'pwFHCqoQZGmho4w6')
+    ECPAY_HASH_IV = _read_secret('ECPAY_HASH_IV', 'EkRm7iFT261dpevs')
+    ECPAY_RETURN_URL = os.environ.get('ECPAY_RETURN_URL')
+    ECPAY_CLIENT_BACK_URL = os.environ.get('ECPAY_CLIENT_BACK_URL')
 
 
 class DevelopmentConfig(BaseConfig):

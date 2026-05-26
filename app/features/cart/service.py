@@ -26,6 +26,13 @@ class CheckoutData:
     notes: str | None
 
 
+@dataclass
+class CheckoutOrder:
+    order_number: str
+    total_amount: Decimal
+    item_names: list[str]
+
+
 def _primary_image(product: Dict[str, Any]) -> str:
     images = product.get('images') or []
     if not images:
@@ -103,7 +110,7 @@ def _validate_checkout_form(form_data: Dict[str, Any]) -> CheckoutData:
     )
 
 
-def checkout(form_data: Dict[str, Any]) -> str:
+def checkout(form_data: Dict[str, Any]) -> CheckoutOrder:
     summary = cart_utils.summarize()
     if summary['total_quantity'] == 0:
         raise CartError("購物車為空，請先選購商品")
@@ -146,8 +153,40 @@ def checkout(form_data: Dict[str, Any]) -> str:
         'fulfillment_method': checkout_data.fulfillment_method,
         'notes': checkout_data.notes,
         'total_amount': total_amount.quantize(Decimal('0.01')),
+        'payment_status': 'pending',
     }
 
     repository.create_order(order_payload, validated_items)
     cart_utils.clear_cart()
-    return order_number
+    return CheckoutOrder(
+        order_number=order_number,
+        total_amount=order_payload['total_amount'],
+        item_names=[item['product_name'] for item in validated_items],
+    )
+
+
+def record_ecpay_result(form_data: Dict[str, Any]) -> bool:
+    order_number = (form_data.get('MerchantTradeNo') or '').strip()
+    if not order_number:
+        raise CartError("缺少訂單編號")
+
+    return_code = str(form_data.get('RtnCode') or '')
+    payment_status = 'paid' if return_code == '1' else 'failed'
+
+    from .ecpay import parse_payment_date
+
+    return repository.update_payment_result(
+        order_number,
+        {
+            'payment_status': payment_status,
+            'ecpay_trade_no': form_data.get('TradeNo'),
+            'ecpay_payment_type': form_data.get('PaymentType'),
+            'ecpay_payment_date': parse_payment_date(form_data.get('PaymentDate')),
+            'ecpay_return_code': return_code,
+            'ecpay_return_message': form_data.get('RtnMsg'),
+        },
+    )
+
+
+def get_order_payment_status(order_number: str) -> dict[str, Any] | None:
+    return repository.fetch_order_payment_status(order_number)

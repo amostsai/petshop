@@ -111,7 +111,51 @@ petshop/
 
 - `/products` 顯示商品分類、列表與詳細頁，可將有庫存的商品加入購物車。
 - 購物車支援調整數量、移除商品與查看訂單摘要，並在導覽列顯示件數徽章。
-- 結帳流程會寫入訂單與明細至 MySQL，並在成功後顯示訂單編號供後續追蹤。
+- 結帳流程會寫入訂單與明細至 MySQL，並導向綠界測試付款頁。付款完成後可回到感謝頁查看訂單編號與付款狀態。
+
+### 綠界測試金流
+
+本專案預設使用綠界 ECPay STAGE 測試環境：
+
+- 付款網址：`https://payment-stage.ecpay.com.tw/Cashier/AioCheckOut/V5`
+- 測試 MerchantID：`3002607`
+- 測試 HashKey / HashIV 已在開發設定中提供，可用環境變數覆寫。
+
+可用環境變數：
+
+```bash
+ECPAY_CHECKOUT_URL=https://payment-stage.ecpay.com.tw/Cashier/AioCheckOut/V5
+ECPAY_MERCHANT_ID=3002607
+ECPAY_HASH_KEY=你的 HashKey
+ECPAY_HASH_IV=你的 HashIV
+ECPAY_RETURN_URL=https://你的公開網址/cart/ecpay/return
+ECPAY_CLIENT_BACK_URL=https://你的公開網址/cart/thank-you/訂單編號
+```
+
+注意：綠界付款完成後會由綠界伺服器呼叫 `ECPAY_RETURN_URL`。本機 Docker 的 `localhost` 無法被綠界連到；若要測試訂單自動更新為 `paid`，請使用 ngrok 或其他公開測試網址，例如：
+
+```bash
+ECPAY_RETURN_URL=https://example.ngrok-free.app/cart/ecpay/return docker compose up
+```
+
+若你是在既有 MySQL volume 上加入此功能，`env/mysql/init.sql` 不會自動重新套用。可選擇重建資料庫：
+
+```bash
+docker compose down -v
+docker compose up
+```
+
+或手動補上訂單付款欄位：
+
+```sql
+ALTER TABLE orders
+  ADD COLUMN payment_status ENUM('pending','paid','failed') NOT NULL DEFAULT 'pending' AFTER total_amount,
+  ADD COLUMN ecpay_trade_no VARCHAR(20) NULL AFTER payment_status,
+  ADD COLUMN ecpay_payment_type VARCHAR(20) NULL AFTER ecpay_trade_no,
+  ADD COLUMN ecpay_payment_date DATETIME NULL AFTER ecpay_payment_type,
+  ADD COLUMN ecpay_return_code VARCHAR(10) NULL AFTER ecpay_payment_date,
+  ADD COLUMN ecpay_return_message VARCHAR(255) NULL AFTER ecpay_return_code;
+```
 
 ---
 

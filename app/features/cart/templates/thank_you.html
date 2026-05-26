@@ -5,10 +5,25 @@
         <i class="fa-solid fa-paw"></i>
     </div>
     <h1 class="text-3xl font-bold text-pink-700">感謝您的訂購！</h1>
-    <p class="text-gray-600">我們已收到您的訂單，服務人員將於 1 個工作日內與您聯繫確認細節。</p>
+    {% set status = payment_status.payment_status if payment_status else 'pending' %}
+    {% if status == 'paid' %}
+    <p class="text-gray-600">我們已收到您的付款，服務人員將於 1 個工作日內與您聯繫確認細節。</p>
+    {% elif status == 'failed' %}
+    <p class="text-gray-600">訂單已建立，但付款尚未完成。請重新確認付款結果或與我們聯繫。</p>
+    {% else %}
+    <p class="text-gray-600">訂單已建立，付款狀態將依綠界回傳結果更新。</p>
+    {% endif %}
     <div class="bg-pink-50 border border-pink-100 rounded-xl px-6 py-4 inline-block">
         <p class="text-sm text-gray-500 mb-1">訂單編號</p>
         <p class="text-xl font-semibold text-pink-700 tracking-wide">{{ order_number }}</p>
+        <p class="text-sm font-semibold mt-3
+                  {% if status == 'paid' %}text-green-600
+                  {% elif status == 'failed' %}text-red-600
+                  {% else %}text-amber-600{% endif %}">
+            {% if status == 'paid' %}已付款
+            {% elif status == 'failed' %}付款失敗
+            {% else %}待付款{% endif %}
+        </p>
     </div>
     <div class="pt-4 space-x-3">
         <a href="{{ url_for('products.catalog') }}"
